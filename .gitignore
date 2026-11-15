@@ -9,3 +9,10 @@ htmlcov/
 .idea/
 .vscode/
 *.log
+
+# deployment secrets
+.thevibehosting*
+
+deploy.tar.gz
+deploy_remote.sh
+

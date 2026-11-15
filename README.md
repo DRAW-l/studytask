@@ -6,6 +6,20 @@
 - 无登录、无网络依赖，数据保存在本机 `instance/studytask.db`
 - 中文界面，支持任务增删改查、组合筛选、状态调整、逾期提醒与完成率统计
 
+## 在线演示
+
+<https://studytask-demo.thevibehosting.com/>
+
+免费实例空闲时会休眠，首次访问需 1—3 秒唤醒。该实例公开可写，仅用于课程演示，请勿存放真实数据。
+
+## 生产运行（可选）
+
+```bash
+pip install -r requirements-prod.txt
+gunicorn --workers 1 --worker-class gthread --threads 4 \
+  --bind 0.0.0.0:80 "app:create_app()"
+```
+
 ## 快速开始
 
 ```bash
