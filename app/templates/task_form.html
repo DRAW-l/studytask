@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ "编辑任务" if mode == "edit" else "新建任务" }} · StudyTask{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+  <h1 class="page-title">{{ "编辑任务" if mode == "edit" else "新建任务" }}</h1>
+
+  {% if errors %}
+    <div class="flash flash-error" role="alert">请检查标红的字段后重新提交。</div>
+  {% endif %}
+
+  <form method="post"
+        action="{{ url_for('tasks.update', task_id=task.id) if mode == 'edit' else url_for('tasks.create') }}">
+    <div class="field">
+      <label for="title">任务名称 <span class="required">*</span></label>
+      <input id="title" name="title" type="text" maxlength="100" required
+             value="{{ values.title }}">
+      {% if errors.title %}<p class="field-error">{{ errors.title }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="course">所属课程 <span class="required">*</span></label>
+      <input id="course" name="course" type="text" maxlength="60" required
+             value="{{ values.course }}">
+      {% if errors.course %}<p class="field-error">{{ errors.course }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="due_date">截止日期 <span class="required">*</span></label>
+      <input id="due_date" name="due_date" type="date" required
+             value="{{ values.due_date }}">
+      {% if errors.due_date %}<p class="field-error">{{ errors.due_date }}</p>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="priority">优先级 <span class="required">*</span></label>
+      <select id="priority" name="priority">
+        {% for priority in ["高", "中", "低"] %}
+          <option value="{{ priority }}" {% if values.priority == priority %}selected{% endif %}>{{ priority }}</option>
+        {% endfor %}
+      </select>
+      {% if errors.priority %}<p class="field-error">{{ errors.priority }}</p>{% endif %}
+    </div>
+
+    {% if mode == "edit" %}
+      <div class="field">
+        <label for="status">状态</label>
+        <select id="status" name="status">
+          {% for status in ["待完成", "进行中", "已完成"] %}
+            <option value="{{ status }}" {% if values.status == status %}selected{% endif %}>{{ status }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% else %}
+      <p class="hint">新建任务默认为“待完成”，可在列表中或详情页调整状态。</p>
+    {% endif %}
+
+    <div class="field">
+      <label for="description">任务描述</label>
+      <textarea id="description" name="description" rows="5" maxlength="1000">{{ values.description }}</textarea>
+      {% if errors.description %}<p class="field-error">{{ errors.description }}</p>{% endif %}
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">保存</button>
+      <a class="btn" href="{{ url_for('tasks.detail', task_id=task.id) if mode == 'edit' else url_for('tasks.index') }}">取消</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

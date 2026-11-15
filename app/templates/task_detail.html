@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ task.title }} · StudyTask{% endblock %}
+
+{% block content %}
+<section class="panel detail-panel">
+  <div class="detail-head">
+    <div>
+      <h1 class="page-title">{{ task.title }}</h1>
+      <p class="detail-meta">
+        <span class="priority priority-{{ task.priority }}">{{ task.priority }}</span>
+        <span class="status status-{{ task.status }}">{{ task.status }}</span>
+        {% if task.overdue %}<span class="badge badge-overdue">逾期</span>{% endif %}
+        {% if task.due_soon and not task.overdue %}<span class="badge badge-soon">即将到期</span>{% endif %}
+      </p>
+    </div>
+    <div class="detail-actions">
+      <a class="btn" href="{{ url_for('tasks.edit', task_id=task.id) }}">编辑</a>
+      <a class="btn btn-danger" href="{{ url_for('tasks.confirm_delete', task_id=task.id) }}">删除</a>
+      <a class="btn" href="{{ url_for('tasks.index') }}">返回列表</a>
+    </div>
+  </div>
+
+  {% if task.overdue %}
+    <div class="notice notice-danger">该任务已逾期，截止日期为 {{ task.due_date }}。</div>
+  {% elif task.due_soon %}
+    <div class="notice notice-warning">该任务将在 3 天内到期（{{ task.due_date }}）。</div>
+  {% endif %}
+
+  <dl class="detail-list">
+    <dt>所属课程</dt><dd>{{ task.course }}</dd>
+    <dt>截止日期</dt><dd>{{ task.due_date }}</dd>
+    <dt>优先级</dt><dd>{{ task.priority }}</dd>
+    <dt>状态</dt><dd>{{ task.status }}</dd>
+    <dt>任务描述</dt>
+    <dd class="pre-wrap">{{ task.description or "（无描述）" }}</dd>
+    <dt>创建时间</dt><dd>{{ task.created_at }}</dd>
+    <dt>更新时间</dt><dd>{{ task.updated_at }}</dd>
+  </dl>
+
+  <div class="status-actions">
+    <span>调整状态：</span>
+    {% for status in ["待完成", "进行中", "已完成"] %}
+      <form class="inline" method="post" action="{{ url_for('tasks.change_status', task_id=task.id) }}">
+        <input type="hidden" name="status" value="{{ status }}">
+        <input type="hidden" name="next" value="{{ url_for('tasks.detail', task_id=task.id) }}">
+        <button class="btn btn-small {% if task.status == status %}btn-active{% endif %}" type="submit">{{ status }}</button>
+      </form>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
